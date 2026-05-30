@@ -32,7 +32,7 @@ jobs:
         include:
           - target: ios
             os: macos-15
-            flutter_version: "3.22.x"
+            flutter_version: "3.32.x"
             artifact_name: release-ios
             artifact_path: build/**/Eros-FE*.ipa
 
