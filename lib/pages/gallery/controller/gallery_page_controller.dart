@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:eros_fe/common/controller/cache_controller.dart';
 import 'package:eros_fe/common/controller/download_controller.dart';
