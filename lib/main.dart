@@ -19,7 +19,6 @@ import 'package:flutter_windowmanager_plus/flutter_windowmanager_plus.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'get_init.dart';
 import 'widget/desktop.dart';
@@ -28,8 +27,6 @@ Future<void> main() async {
   // BindingBase.debugZoneErrorsAreFatal = true;
   // runZonedGuarded<Future<void>>(() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final dsn = await getSentryDsn();
-
   Get.lazyPut(() => LogService(), fenix: true);
 
   await Global.init();
@@ -45,19 +42,7 @@ Future<void> main() async {
   resetLogLevel();
   updateTagTranslate();
 
-  if (dsn != null && dsn.isNotEmpty) {
-    await SentryFlutter.init(
-      (SentryFlutterOptions options) {
-        options
-          ..dsn = dsn
-          // ..debug = kDebugMode
-          ..diagnosticLevel = SentryLevel.warning;
-      },
-      appRunner: () => runApp(const MyApp()),
-    );
-  } else {
-    runApp(const MyApp());
-  }
+  runApp(const MyApp());
 
   if (GetPlatform.isDesktop) {
     doWhenWindowReady(() {
@@ -176,7 +161,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           debugShowCheckedModeBanner: false,
           onGenerateTitle: (BuildContext context) => L10n.of(context).app_title,
           navigatorObservers: [
-            SentryNavigatorObserver(),
             FlutterSmartDialog.observer,
             MainNavigatorObserver(),
           ],
