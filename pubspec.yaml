@@ -238,7 +238,6 @@ dev_dependencies:
       url: https://github.com/callumw-k/isar-community.git
       ref: migrating-to-source_gen-3
       path: packages/isar_community_generator
-  flutter_lints: ^6.0.0
 
 dependency_overrides:
 #  analyzer: ^8.0.0
