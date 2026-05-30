@@ -47,6 +47,8 @@ class GalleryPageController extends GetxController
 
   final imageLoadLock = Lock();
 
+  StreamSubscription? _galleryCacheSub;
+
   @override
   void onInit() {
     super.onInit();
@@ -95,7 +97,7 @@ class GalleryPageController extends GetxController
       _loadData();
 
       // 初始
-      _galleryCacheController
+      _galleryCacheSub = _galleryCacheController
           .listenGalleryCache(gState.galleryProvider?.gid ?? '')
           .listen((_galleryCache) =>
               gState.lastIndex = _galleryCache?.lastIndex ?? 0);
@@ -111,6 +113,7 @@ class GalleryPageController extends GetxController
 
   @override
   void onClose() {
+    _galleryCacheSub?.cancel();
     scrollController?.dispose();
     logger.t('onClose GalleryPageController $pageCtrlTag');
     super.onClose();
@@ -542,9 +545,15 @@ class GalleryPageController extends GetxController
       return true;
     }
 
+    int retries = 0;
     while (index > _galleryImageList.length - 1) {
       logger.d(' index = $index ; len = ${_galleryImageList.length}');
+      final prevLen = _galleryImageList.length;
       await _loadMordPreview();
+      if (_galleryImageList.length == prevLen || ++retries > 10) {
+        logger.w('loadPriviewUntilIndex: no progress at index=$index, stopping');
+        break;
+      }
     }
     return true;
   }

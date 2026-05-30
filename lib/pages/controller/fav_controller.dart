@@ -311,6 +311,13 @@ class FavController extends GetxController {
     return Favcat(favTitle: _favTitle, favId: _lastFavcat);
   }
 
+  @override
+  void onClose() {
+    _favnoteController.dispose();
+    _fixedExtentScrollController.dispose();
+    super.onClose();
+  }
+
   /// 删除收藏
   Future<void> delFav(String favcat, String gid, String token) async {
     if (favcat.isNotEmpty && favcat != 'l') {

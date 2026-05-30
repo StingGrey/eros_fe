@@ -68,10 +68,12 @@ class AllThumbnailsPageController extends GetxController
 
     //获取position
     final RenderBox? box =
-        globalKey.currentContext!.findRenderObject() as RenderBox?;
+        globalKey.currentContext?.findRenderObject() as RenderBox?;
+
+    if (box == null) return;
 
     //获取size
-    final Size size = box!.size;
+    final Size size = box.size;
 
     final MediaQueryData _mq = MediaQuery.of(Get.context!);
     final Size _screenSize = _mq.size;

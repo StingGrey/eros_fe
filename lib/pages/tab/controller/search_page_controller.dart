@@ -306,6 +306,9 @@ class SearchPageController extends DefaultTabViewController {
 
   @override
   void onClose() {
+    searchTextController.removeListener(_delayedSearch);
+    searchTextController.dispose();
+    searchFocusNode.dispose();
     super.onClose();
   }
 

@@ -144,6 +144,11 @@ class ViewExtController extends GetxController {
   Timer? autoNextTimer;
 
   StreamSubscription? _volumeKeyDownSubscription;
+  StreamSubscription? _scaleStateSubscription;
+  StreamSubscription? _precacheSubscription;
+
+  late final VoidCallback _itemPositionsCallback;
+  late final VoidCallback _thumbPositionsCallback;
 
   String? safCacheDirectory;
 
@@ -196,11 +201,12 @@ class ViewExtController extends GetxController {
     }
 
     // list视图滚动监听
-    itemPositionsListener.itemPositions.addListener(() {
+    _itemPositionsCallback = () {
       final positions = itemPositionsListener.itemPositions.value;
       vState.tempPos = positions.first.itemLeadingEdge;
       handItemPositionsChange(positions);
-    });
+    };
+    itemPositionsListener.itemPositions.addListener(_itemPositionsCallback);
 
     Future.delayed(const Duration(milliseconds: 200)).then((value) {
       if (thumbScrollController.isAttached) {
@@ -209,12 +215,14 @@ class ViewExtController extends GetxController {
     });
 
     // 缩略图滚动组件监听
-    thumbPositionsListener.itemPositions.addListener(() {
+    _thumbPositionsCallback = () {
       final positions = thumbPositionsListener.itemPositions.value;
       handThumbPositionsChange(positions);
-    });
+    };
+    thumbPositionsListener.itemPositions.addListener(_thumbPositionsCallback);
 
-    photoViewScaleStateController.outputScaleStateStream.listen((state) {
+    _scaleStateSubscription =
+        photoViewScaleStateController.outputScaleStateStream.listen((state) {
       final prevScaleState = photoViewScaleStateController.prevScaleState;
       logger.d('prevScaleState $prevScaleState , cur state $state');
     });
@@ -234,7 +242,7 @@ class ViewExtController extends GetxController {
       // 预载
       logger.t('初始预载');
 
-      GalleryPara.instance
+      _precacheSubscription = GalleryPara.instance
           .ehPrecacheImages(
         imageMap: vState.imageMap,
         itemSer: vState.currentItemIndex,
@@ -270,6 +278,13 @@ class ViewExtController extends GetxController {
     cancelAutoRead();
     autoNextTimer?.cancel();
     autoNextTimer = null;
+    debounceTimer?.cancel();
+    debounceTimer = null;
+
+    itemPositionsListener.itemPositions.removeListener(_itemPositionsCallback);
+    thumbPositionsListener.itemPositions.removeListener(_thumbPositionsCallback);
+    _scaleStateSubscription?.cancel();
+    _precacheSubscription?.cancel();
 
     vState.speedTimer?.cancel();
     Get.find<GalleryCacheController>().saveAll();
@@ -288,7 +303,7 @@ class ViewExtController extends GetxController {
     logger.t('恢复系统旋转设置');
     OrientationHelper.setPreferredOrientations(DeviceOrientation.values);
 
-    vState.asyncInputStreamMap.values.map((e) => e.close());
+    vState.asyncInputStreamMap.values.forEach((e) => e.close());
 
     if (safCacheDirectory != null) {
       Saf.clearCacheFor(safCacheDirectory);
@@ -1385,7 +1400,7 @@ class ViewExtController extends GetxController {
     }
   }
 
-  static Timer? debounceTimer;
+  Timer? debounceTimer;
 
   // 防抖函数
   void vvDebounce(

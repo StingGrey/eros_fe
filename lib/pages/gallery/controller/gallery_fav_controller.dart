@@ -87,7 +87,7 @@ class GalleryFavController extends GetxController {
         _itemController.setFavTitleAndFavcat(
             favTitle: favTitle, favcat: favcat);
       }
-      _pageState.galleryProvider
+      _pageState.galleryProvider = _pageState.galleryProvider
           ?.copyWith(favcat: favcat.oN, favTitle: favtitle.oN);
     } catch (_) {}
   }
@@ -99,7 +99,7 @@ class GalleryFavController extends GetxController {
     isLoading = true;
 
     final String _favTitleFromProfile =
-        Global.profile.user.favcat![int.parse(_lastFavcat) + 1].favTitle;
+        Global.profile.user.favcat![int.parse(_lastFavcat)].favTitle;
 
     try {
       await favController.addToLastFavcat(
@@ -115,7 +115,7 @@ class GalleryFavController extends GetxController {
       isLoading = false;
       _favTitle.value = _favTitleFromProfile;
       _favcat.value = _lastFavcat;
-      _pageState.galleryProvider
+      _pageState.galleryProvider = _pageState.galleryProvider
           ?.copyWith(favcat: favcat.oN, favTitle: _favTitleFromProfile.oN);
       if (isRegItemController) {
         _itemController.setFavTitleAndFavcat(

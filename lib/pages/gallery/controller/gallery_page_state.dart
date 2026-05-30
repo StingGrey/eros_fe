@@ -101,9 +101,9 @@ class GalleryPageState {
 
     if ((_ehSettingService.jpnTitleInGalleryPage) &&
         (galleryProvider?.japaneseTitle?.isNotEmpty ?? false)) {
-      return galleryProvider?.englishTitle ?? '';
-    } else {
       return galleryProvider?.japaneseTitle ?? '';
+    } else {
+      return galleryProvider?.englishTitle ?? '';
     }
 
     // if (_subTitle.value.isNotEmpty) {

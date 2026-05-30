@@ -36,10 +36,9 @@
 *.otf             binary
 
 
-GoogleService-Info.plist   filter=git-crypt diff=git-crypt binary
-google-service.json        filter=git-crypt diff=git-crypt binary
-google-services.json       filter=git-crypt diff=git-crypt binary
-firebase_app_id_file.json  filter=git-crypt diff=git-crypt binary
-/lib/firebase_options.dart filter=git-crypt diff=git-crypt binary
-/lib/config/config.dart    filter=git-crypt diff=git-crypt binary
-/lib/firebase_options.dart filter=git-crypt diff=git-crypt binary
+GoogleService-Info.plist   text
+google-service.json        text
+google-services.json       text
+firebase_app_id_file.json  text
+/lib/firebase_options.dart text
+/lib/config/config.dart    text

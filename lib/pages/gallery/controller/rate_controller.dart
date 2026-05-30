@@ -39,11 +39,20 @@ class RateController extends GetxController {
       token: _item!.token ?? '',
       rating: (rate * 2).round(),
     );
+    final ratingUsr = double.tryParse(rultMap['rating_usr']?.toString() ?? '');
+    final ratingAvg = double.tryParse(rultMap['rating_avg']?.toString() ?? '');
+    final ratingCnt = rultMap['rating_cnt'] as int?;
+    final colorRating = rultMap['rating_cls'] as String?;
+    if (ratingUsr == null || ratingAvg == null || ratingCnt == null || colorRating == null) {
+      logger.e('rating response missing fields: $rultMap');
+      showToast('Rating failed: unexpected response');
+      return;
+    }
     pageController.afterRating(
-      ratingUsr: double.parse(rultMap['rating_usr'].toString()),
-      ratingAvg: double.parse(rultMap['rating_avg'].toString()),
-      ratingCnt: rultMap['rating_cnt'] as int,
-      colorRating: rultMap['rating_cls'] as String,
+      ratingUsr: ratingUsr,
+      ratingAvg: ratingAvg,
+      ratingCnt: ratingCnt,
+      colorRating: colorRating,
     );
     showToast('Ratting successfully');
   }
