@@ -50,6 +50,7 @@ class _FavoriteSubPageState extends State<FavoriteSubPage>
   Widget build(BuildContext context) {
     super.build(context);
     return CustomScrollView(
+      key: PageStorageKey<String>('favorite_sub_page_${widget.favcat}'),
       // cacheExtent: context.height * 2,
       slivers: [
         SliverSafeArea(
