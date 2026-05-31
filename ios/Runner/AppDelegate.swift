@@ -10,6 +10,9 @@ import flutter_downloader
     ) -> Bool {
         
         GeneratedPluginRegistrant.register(with: self)
+        if let registrar = registrar(forPlugin: "NativeLiquidGlassPlugin") {
+            NativeLiquidGlassPlugin.register(with: registrar)
+        }
         FlutterDownloaderPlugin.setPluginRegistrantCallback(registerPlugins)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }

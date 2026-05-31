@@ -1,10 +1,10 @@
-import 'package:blur/blur.dart';
 import 'package:english_words/english_words.dart';
 import 'package:eros_fe/common/service/ehsetting_service.dart';
 import 'package:eros_fe/common/service/theme_service.dart';
 import 'package:eros_fe/index.dart';
 import 'package:eros_fe/pages/tab/controller/group/custom_sublist_controller.dart';
 import 'package:eros_fe/pages/tab/controller/group/custom_tabbar_controller.dart';
+import 'package:eros_fe/widget/native_liquid_glass.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/cupertino.dart' hide CupertinoTabBar;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -329,7 +329,7 @@ class CustomTabBar extends StatelessWidget {
         Obx(() {
           // 不要删除这行
           ehTheme.isDarkMode;
-          return Blur(
+          return NativeLiquidGlass(
             blur: 10,
             blurColor: barBackgroundColor,
             colorOpacity: kEnableImpeller ? 1.0 : opacity,

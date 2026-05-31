@@ -1,4 +1,3 @@
-import 'package:blur/blur.dart';
 import 'package:eros_fe/common/service/ehsetting_service.dart';
 import 'package:eros_fe/common/service/layout_service.dart';
 import 'package:eros_fe/common/service/theme_service.dart';
@@ -6,6 +5,7 @@ import 'package:eros_fe/index.dart';
 import 'package:eros_fe/pages/tab/controller/favorite/favorite_tabbar_controller.dart';
 import 'package:eros_fe/pages/tab/controller/search_page_controller.dart';
 import 'package:eros_fe/pages/tab/controller/tabhome_controller.dart';
+import 'package:eros_fe/widget/native_liquid_glass.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -300,7 +300,7 @@ class FavoriteTabBar extends StatelessWidget {
         Obx(() {
           // 不要删除这行
           ehTheme.isDarkMode;
-          return Blur(
+          return NativeLiquidGlass(
             blur: 10,
             blurColor: barBackgroundColor,
             colorOpacity: kEnableImpeller ? 1.0 : opacity,
