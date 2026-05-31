@@ -151,6 +151,7 @@ class _ToplistTabState extends State<ToplistTab> {
     final customScrollView = Obx(() {
       final hideTopBarOnScroll = _ehSettingService.hideTopBarOnScroll;
       return CustomScrollView(
+        key: const PageStorageKey<String>('toplist_tab'),
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: <Widget>[
           // sliverNavigationBar,

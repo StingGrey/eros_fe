@@ -130,6 +130,7 @@ class _GallerySearchPageState extends State<GallerySearchPage> {
 
   Widget _buildSearchResult(BuildContext context) {
     return CustomScrollView(
+      key: const PageStorageKey<String>('gallery_search_page'),
       // cacheExtent: context.height * 2,
       slivers: <Widget>[
         // todo android上会有一次删除多个字符的问题

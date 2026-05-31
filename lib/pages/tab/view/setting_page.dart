@@ -16,6 +16,7 @@ class SettingTab extends GetView<SettingViewController> {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       child: CustomScrollView(
+        key: const PageStorageKey<String>('setting_tab'),
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: <Widget>[
           CupertinoSliverNavigationBar(

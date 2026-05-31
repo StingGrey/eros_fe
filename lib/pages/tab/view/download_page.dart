@@ -179,6 +179,7 @@ class _DownloadArchiverViewState extends State<DownloadArchiverView>
   Widget build(BuildContext context) {
     super.build(context);
     return SafeArea(
+      key: const PageStorageKey<String>('download_archiver_view'),
       top: false,
       bottom: false,
       child: AnimatedList(
@@ -222,6 +223,7 @@ class _DownloadGalleryViewState extends State<DownloadGalleryView>
       // TODO: 会导致任务状态变化时， 列表重新回到顶部
       // controller.animatedGalleryListKey = GlobalKey<AnimatedListState>();
       return SafeArea(
+        key: const PageStorageKey<String>('download_gallery_view'),
         top: false,
         bottom: false,
         child: AnimatedList(

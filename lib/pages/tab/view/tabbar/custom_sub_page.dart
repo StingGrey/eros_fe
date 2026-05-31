@@ -57,6 +57,7 @@ class _SubListViewState<T extends CustomSubListController>
   Widget build(BuildContext context) {
     super.build(context);
     return CustomScrollView(
+      key: PageStorageKey<String>('custom_sub_page_${widget.profileUuid}'),
       cacheExtent: kTabViewCacheExtent,
       physics:
           const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),

@@ -96,6 +96,7 @@ class _HistoryTabState extends State<HistoryTab> {
       ),
     );
     final Widget customScrollView = CustomScrollView(
+      key: const PageStorageKey<String>('history_tab'),
       slivers: <Widget>[
         SliverFloatingPinnedPersistentHeader(
           delegate: SliverFloatingPinnedPersistentHeaderBuilder(

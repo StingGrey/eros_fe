@@ -36,6 +36,7 @@ class SearchImagePage extends GetView<SearchImageController> {
       ),
       child: Container(
         child: CustomScrollView(
+          key: const PageStorageKey<String>('search_image_page'),
           slivers: [
             SliverPersistentHeader(
               delegate: ImagePersistentHeaderDelegate(),
