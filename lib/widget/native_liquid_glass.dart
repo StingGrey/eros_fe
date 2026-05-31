@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
 
 const String _kNativeLiquidGlassViewType = 'eros_fe/native_liquid_glass';
 
-/// Small iOS-native Liquid Glass host.
+/// Small iOS-native glass material host.
 ///
-/// On iOS this embeds a UIKit [UIVisualEffectView] backed by iOS 26's
-/// `UIGlassEffect` when it is available at runtime. Older iOS versions and
-/// non-iOS targets fall back to the existing Flutter blur implementation.
+/// On iOS this embeds a UIKit [UIVisualEffectView] for a native material
+/// backdrop. Non-iOS targets fall back to the existing Flutter blur
+/// implementation.
 class NativeLiquidGlass extends StatelessWidget {
   const NativeLiquidGlass({
     super.key,
@@ -56,21 +56,17 @@ class NativeLiquidGlass extends StatelessWidget {
       children: [
         Positioned.fill(
           child: IgnorePointer(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(cornerRadius),
-              child: UiKitView(
-                viewType: _kNativeLiquidGlassViewType,
-                hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-                creationParamsCodec: const StandardMessageCodec(),
-                creationParams: <String, Object?>{
-                  'style': 'regular',
-                  'fallbackStyle': 'systemUltraThinMaterial',
-                  'tintColor': _colorToArgb32(resolvedColor),
-                  'overlayColor': _colorToArgb32(overlayColor),
-                  'cornerRadius': cornerRadius,
-                  'isInteractive': false,
-                },
-              ),
+            child: UiKitView(
+              viewType: _kNativeLiquidGlassViewType,
+              hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+              creationParamsCodec: const StandardMessageCodec(),
+              creationParams: <String, Object?>{
+                'style': 'regular',
+                'fallbackStyle': 'systemUltraThinMaterial',
+                'tintColor': _colorToArgb32(resolvedColor),
+                'overlayColor': _colorToArgb32(overlayColor),
+                'cornerRadius': cornerRadius,
+              },
             ),
           ),
         ),
