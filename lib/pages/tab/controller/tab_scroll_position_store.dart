@@ -6,15 +6,18 @@ class TabScrollPositionStore {
 
   static final TabScrollPositionStore instance = TabScrollPositionStore._();
   static const double _lowerOffsetTolerance = 24;
+  static const double _restorePixelTolerance = 1;
   static const Duration _defaultProtectionDuration =
       Duration(milliseconds: 3200);
   static const List<Duration> _restoreDelays = [
-    Duration(milliseconds: 80),
-    Duration(milliseconds: 180),
-    Duration(milliseconds: 350),
-    Duration(milliseconds: 700),
-    Duration(milliseconds: 1100),
-    Duration(milliseconds: 1700),
+    Duration.zero,
+    Duration(milliseconds: 16),
+    Duration(milliseconds: 50),
+    Duration(milliseconds: 120),
+    Duration(milliseconds: 250),
+    Duration(milliseconds: 500),
+    Duration(milliseconds: 900),
+    Duration(milliseconds: 1500),
     Duration(milliseconds: 2500),
   ];
 
@@ -34,6 +37,14 @@ class TabScrollPositionStore {
   }
 
   double? offsetFor(String key) => _offsets[key];
+
+  double? protectedTargetFor(String key, double offset) {
+    final normalized = _normalizeOffset(offset);
+    if (_shouldKeepCurrentOffset(key, normalized)) {
+      return _offsets[key];
+    }
+    return null;
+  }
 
   void saveOffset(String key, double offset, {bool userScroll = false}) {
     if (!canRecord || !offset.isFinite) {
@@ -251,6 +262,10 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
     _updatePosition(notification.context);
     _updateUserScrollState(notification);
 
+    if (_restoreProtectedLowerOffset(notification.metrics.pixels)) {
+      return false;
+    }
+
     if (_restoring || !_store.canRecord || !_shouldRecord(notification)) {
       return false;
     }
@@ -288,6 +303,10 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
     }
 
     final generation = ++_restoreGeneration;
+    if (_tryRestoreNow(offset, generation)) {
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _restoreWithRetry(offset, 0, generation);
     });
@@ -325,23 +344,44 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
       return;
     }
 
+    _jumpToOffset(position, offset);
+  }
+
+  bool _tryRestoreNow(double offset, int generation) {
+    if (!mounted || _userScrollActive || generation != _restoreGeneration) {
+      return true;
+    }
+
+    final position = _scrollPosition;
+    if (position == null ||
+        !position.hasContentDimensions ||
+        (position.maxScrollExtent <= 0 && offset > 0)) {
+      return false;
+    }
+
+    return _jumpToOffset(position, offset);
+  }
+
+  bool _jumpToOffset(ScrollPosition position, double offset) {
     _restoring = true;
     try {
-      final target = offset.clamp(
-        position.minScrollExtent,
-        position.maxScrollExtent,
-      );
+      final target = offset
+          .clamp(
+            position.minScrollExtent,
+            position.maxScrollExtent,
+          )
+          .toDouble();
+      if ((position.pixels - target).abs() <=
+          TabScrollPositionStore._restorePixelTolerance) {
+        return true;
+      }
       position.jumpTo(target);
+      return true;
     } catch (_) {
       if (_position == position) {
         _position = null;
       }
-      if (attempt < 8) {
-        Future<void>.delayed(
-          const Duration(milliseconds: 80),
-          () => _restoreWithRetry(offset, attempt + 1, generation),
-        );
-      }
+      return false;
     } finally {
       Future<void>.delayed(const Duration(milliseconds: 180), () {
         if (mounted) {
@@ -349,6 +389,27 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
         }
       });
     }
+  }
+
+  bool _restoreProtectedLowerOffset(double offset) {
+    if (_userScrollActive) {
+      return false;
+    }
+
+    final target = _store.protectedTargetFor(widget.storageKey, offset);
+    if (target == null) {
+      return false;
+    }
+
+    final generation = ++_restoreGeneration;
+    if (_tryRestoreNow(target, generation)) {
+      return true;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _restoreWithRetry(target, 0, generation);
+    });
+    return true;
   }
 
   bool _shouldRecord(ScrollNotification notification) {
