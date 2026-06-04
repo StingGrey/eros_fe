@@ -23,6 +23,7 @@ class TabScrollPositionStore {
   final Map<String, double? Function()> _offsetReaders = {};
 
   int _recordingPauseCount = 0;
+  int _restorePassGeneration = 0;
   DateTime? _lowerOffsetProtectionExpiresAt;
 
   bool get canRecord => _recordingPauseCount == 0;
@@ -83,6 +84,12 @@ class TabScrollPositionStore {
     }
   }
 
+  void handleUserScroll() {
+    _restorePassGeneration += 1;
+    _lowerOffsetProtectionExpiresAt = null;
+    _recordingPauseCount = 0;
+  }
+
   void restoreAfterRoutePop() {
     _protectLowerOffsetsFor(_defaultProtectionDuration);
     snapshotRegisteredOffsets(keepLargerOffsets: true);
@@ -127,9 +134,19 @@ class TabScrollPositionStore {
   }
 
   void _scheduleRestorePasses() {
-    restoreRegistered();
+    final generation = ++_restorePassGeneration;
+    _restoreRegisteredForGeneration(generation);
     for (final delay in _restoreDelays) {
-      Future<void>.delayed(delay, restoreRegistered);
+      Future<void>.delayed(
+        delay,
+        () => _restoreRegisteredForGeneration(generation),
+      );
+    }
+  }
+
+  void _restoreRegisteredForGeneration(int generation) {
+    if (generation == _restorePassGeneration) {
+      restoreRegistered();
     }
   }
 
@@ -261,7 +278,7 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
   }
 
   void _restore() {
-    if (!mounted) {
+    if (!mounted || _userScrollActive) {
       return;
     }
 
@@ -277,7 +294,7 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
   }
 
   void _restoreWithRetry(double offset, int attempt, int generation) {
-    if (!mounted || generation != _restoreGeneration) {
+    if (!mounted || _userScrollActive || generation != _restoreGeneration) {
       return;
     }
 
@@ -370,6 +387,7 @@ class _TabScrollPositionKeeperState extends State<TabScrollPositionKeeper> {
   void _markUserScrollActive() {
     _userScrollActive = true;
     _userScrollGeneration += 1;
+    _store.handleUserScroll();
   }
 
   void _releaseUserScrollSoon() {
