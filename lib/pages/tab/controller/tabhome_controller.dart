@@ -100,6 +100,8 @@ class TabHomeController extends GetxController {
   int currentIndex = 0;
   bool tapAwait = false;
 
+  final Map<String, PageStorageBucket> _tabPageStorageBuckets = {};
+
   final EhSettingService _ehSettingService = Get.find();
 
   bool get isSafeMode => _ehSettingService.isSafeMode.value;
@@ -228,6 +230,15 @@ class TabHomeController extends GetxController {
 
   List<Widget> get viewList =>
       _showTabs.map((e) => tabPages.tabViews[e]!).toList();
+
+  String routeAtIndex(int index) => _showTabs[index];
+
+  PageStorageBucket pageStorageBucketFor(String route) {
+    return _tabPageStorageBuckets.putIfAbsent(
+      route,
+      () => PageStorageBucket(),
+    );
+  }
 
   List<EhTabController?> get scrollControllerList =>
       _showTabs.map((e) => tabPages.scrollControllerMap[e]).toList();

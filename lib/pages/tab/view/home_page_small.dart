@@ -23,7 +23,11 @@ class TabHomeSmall extends GetView<TabHomeController> {
             return CupertinoTabView(
               builder: (BuildContext context) {
                 // logger.d('build CupertinoTabView');
-                return controller.viewList[index];
+                final route = controller.routeAtIndex(index);
+                return PageStorage(
+                  bucket: controller.pageStorageBucketFor(route),
+                  child: controller.viewList[index],
+                );
               },
             );
           },
