@@ -1,6 +1,7 @@
 import 'package:eros_fe/index.dart';
 import 'package:eros_fe/pages/tab/controller/favorite/favorite_sublist_controller.dart';
 import 'package:eros_fe/pages/tab/controller/favorite/favorite_tabbar_controller.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -49,23 +50,26 @@ class _FavoriteSubPageState extends State<FavoriteSubPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return CustomScrollView(
-      key: PageStorageKey<String>('favorite_sub_page_${widget.favcat}'),
-      // cacheExtent: context.height * 2,
-      slivers: [
-        SliverSafeArea(
-          top: widget.pinned,
-          bottom: false,
-          sliver: _buildRefresh(context),
-        ),
-        _buildListView(),
-        Obx(() {
-          return EndIndicator(
-            pageState: _favoriteSubListController.pageState,
-            loadDataMore: _favoriteSubListController.loadDataMore,
-          );
-        }),
-      ],
+    return TabScrollPositionKeeper(
+      storageKey: 'favorite_sub_page_${widget.favcat}',
+      child: CustomScrollView(
+        key: PageStorageKey<String>('favorite_sub_page_${widget.favcat}'),
+        // cacheExtent: context.height * 2,
+        slivers: [
+          SliverSafeArea(
+            top: widget.pinned,
+            bottom: false,
+            sliver: _buildRefresh(context),
+          ),
+          _buildListView(),
+          Obx(() {
+            return EndIndicator(
+              pageState: _favoriteSubListController.pageState,
+              loadDataMore: _favoriteSubListController.loadDataMore,
+            );
+          }),
+        ],
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:eros_fe/common/service/ehsetting_service.dart';
 import 'package:eros_fe/models/base/eh_models.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/pages/tab/controller/toplist_controller.dart';
 import 'package:eros_fe/pages/tab/view/list/tab_base.dart';
 import 'package:eros_fe/utils/cust_lib/persistent_header_builder.dart';
@@ -198,7 +199,12 @@ class _ToplistTabState extends State<ToplistTab> {
       final hideTopBarOnScroll = _ehSettingService.hideTopBarOnScroll;
       return CupertinoPageScaffold(
         navigationBar: hideTopBarOnScroll ? null : navigationBar,
-        child: SizeCacheWidget(child: customScrollView),
+        child: SizeCacheWidget(
+          child: TabScrollPositionKeeper(
+            storageKey: 'toplist_tab',
+            child: customScrollView,
+          ),
+        ),
       );
     });
   }

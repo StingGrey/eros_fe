@@ -11,6 +11,7 @@ import 'package:eros_fe/pages/gallery/gallery_repository.dart';
 import 'package:eros_fe/pages/image_view/common.dart';
 import 'package:eros_fe/pages/image_view/view/view_page.dart';
 import 'package:eros_fe/pages/tab/controller/search_page_controller.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/pages/tab/view/list/tab_base.dart';
 import 'package:eros_fe/route/first_observer.dart';
 import 'package:get/get.dart';
@@ -264,12 +265,14 @@ class NavigatorUtil {
   static Future<void> goGalleryViewPage(int index, String gid) async {
     // logger.d('goGalleryViewPage $index');
     // 命名路由方式
-    await Get.toNamed(EHRoutes.galleryViewExt,
-        arguments: ViewRepository(
-          index: index,
-          loadType: LoadFrom.gallery,
-          gid: gid,
-        ));
+    await TabScrollPositionStore.instance.preserveDuring(
+      () => Get.toNamed(EHRoutes.galleryViewExt,
+          arguments: ViewRepository(
+            index: index,
+            loadType: LoadFrom.gallery,
+            gid: gid,
+          )),
+    );
     Get.delete<ViewExtController>();
   }
 
@@ -277,13 +280,15 @@ class NavigatorUtil {
   static Future<void> goGalleryViewPageFile(
       int index, List<String> pics, String gid) async {
     // 命名路由方式
-    await Get.toNamed(EHRoutes.galleryViewExt,
-        arguments: ViewRepository(
-          index: index,
-          files: pics,
-          loadType: LoadFrom.download,
-          gid: gid,
-        ));
+    await TabScrollPositionStore.instance.preserveDuring(
+      () => Get.toNamed(EHRoutes.galleryViewExt,
+          arguments: ViewRepository(
+            index: index,
+            files: pics,
+            loadType: LoadFrom.download,
+            gid: gid,
+          )),
+    );
     Get.delete<ViewExtController>();
   }
 
@@ -291,13 +296,15 @@ class NavigatorUtil {
   static Future<void> goGalleryViewPageArchiver(
       int index, AsyncArchive asyncArchive, String gid) async {
     // 命名路由方式
-    await Get.toNamed(EHRoutes.galleryViewExt,
-        arguments: ViewRepository(
-          index: index,
-          asyncArchives: asyncArchive.files,
-          loadType: LoadFrom.archiver,
-          gid: gid,
-        ));
+    await TabScrollPositionStore.instance.preserveDuring(
+      () => Get.toNamed(EHRoutes.galleryViewExt,
+          arguments: ViewRepository(
+            index: index,
+            asyncArchives: asyncArchive.files,
+            loadType: LoadFrom.archiver,
+            gid: gid,
+          )),
+    );
     Get.delete<ViewExtController>();
   }
 

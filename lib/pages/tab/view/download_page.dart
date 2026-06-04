@@ -4,6 +4,7 @@ import 'package:eros_fe/models/download_archiver_task_info.dart';
 import 'package:eros_fe/pages/item/download_archiver_item.dart';
 import 'package:eros_fe/pages/item/download_gallery_item.dart';
 import 'package:eros_fe/pages/tab/controller/download_view_controller.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/store/db/entity/gallery_task.dart';
 import 'package:eros_fe/utils/logger.dart';
 import 'package:flutter/cupertino.dart';
@@ -178,18 +179,21 @@ class _DownloadArchiverViewState extends State<DownloadArchiverView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SafeArea(
-      key: const PageStorageKey<String>('download_archiver_view'),
-      top: false,
-      bottom: false,
-      child: AnimatedList(
-        key: controller.animatedArchiverListKey,
-        padding: EdgeInsets.only(
-          top: context.mediaQueryPadding.top,
-          bottom: context.mediaQueryPadding.bottom,
+    return TabScrollPositionKeeper(
+      storageKey: 'download_archiver_view',
+      child: SafeArea(
+        key: const PageStorageKey<String>('download_archiver_view'),
+        top: false,
+        bottom: false,
+        child: AnimatedList(
+          key: controller.animatedArchiverListKey,
+          padding: EdgeInsets.only(
+            top: context.mediaQueryPadding.top,
+            bottom: context.mediaQueryPadding.bottom,
+          ),
+          initialItemCount: controller.archiverTasks.length,
+          itemBuilder: downloadArchiverItemBuilder,
         ),
-        initialItemCount: controller.archiverTasks.length,
-        itemBuilder: downloadArchiverItemBuilder,
       ),
     );
   }
@@ -222,18 +226,21 @@ class _DownloadGalleryViewState extends State<DownloadGalleryView>
       // controller.galleryTasks更新时，生成新的animatedGalleryListKey，确保列表能刷新
       // TODO: 会导致任务状态变化时， 列表重新回到顶部
       // controller.animatedGalleryListKey = GlobalKey<AnimatedListState>();
-      return SafeArea(
-        key: const PageStorageKey<String>('download_gallery_view'),
-        top: false,
-        bottom: false,
-        child: AnimatedList(
-          key: controller.animatedGalleryListKey,
-          padding: EdgeInsets.only(
-            top: context.mediaQueryPadding.top,
-            bottom: context.mediaQueryPadding.bottom,
+      return TabScrollPositionKeeper(
+        storageKey: 'download_gallery_view',
+        child: SafeArea(
+          key: const PageStorageKey<String>('download_gallery_view'),
+          top: false,
+          bottom: false,
+          child: AnimatedList(
+            key: controller.animatedGalleryListKey,
+            padding: EdgeInsets.only(
+              top: context.mediaQueryPadding.top,
+              bottom: context.mediaQueryPadding.bottom,
+            ),
+            initialItemCount: controller.galleryTasks.length,
+            itemBuilder: downloadItemBuilder,
           ),
-          initialItemCount: controller.galleryTasks.length,
-          itemBuilder: downloadItemBuilder,
         ),
       );
     });

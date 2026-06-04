@@ -3,6 +3,7 @@ import 'package:eros_fe/const/const.dart';
 import 'package:eros_fe/extension.dart';
 import 'package:eros_fe/models/gallery_image.dart';
 import 'package:eros_fe/pages/image_view/view/view_widget.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/utils/logger.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,6 +58,7 @@ class _ViewPageState extends State<ViewPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    TabScrollPositionStore.instance.restoreAfterRoutePop();
     super.dispose();
     logger.t('ViewPage dispose');
   }

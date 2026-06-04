@@ -1,6 +1,7 @@
 import 'package:eros_fe/common/controller/history_controller.dart';
 import 'package:eros_fe/generated/l10n.dart';
 import 'package:eros_fe/pages/tab/controller/history_view_controller.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/pages/tab/controller/tabhome_controller.dart';
 import 'package:eros_fe/pages/tab/view/list/tab_base.dart';
 import 'package:eros_fe/utils/cust_lib/persistent_header_builder.dart';
@@ -132,7 +133,12 @@ class _HistoryTabState extends State<HistoryTab> {
     );
 
     return CupertinoPageScaffold(
-      child: SizeCacheWidget(child: customScrollView),
+      child: SizeCacheWidget(
+        child: TabScrollPositionKeeper(
+          storageKey: 'history_tab',
+          child: customScrollView,
+        ),
+      ),
     );
   }
 }

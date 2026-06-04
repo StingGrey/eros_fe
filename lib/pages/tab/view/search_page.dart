@@ -8,6 +8,7 @@ import 'package:eros_fe/index.dart';
 import 'package:eros_fe/pages/filter/filter.dart';
 import 'package:eros_fe/pages/gallery/view/gallery_widget.dart';
 import 'package:eros_fe/pages/tab/controller/search_page_controller.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/pages/tab/view/gallery_base.dart';
 import 'package:eros_fe/pages/tab/view/list/tab_base.dart';
 import 'package:extended_sliver/extended_sliver.dart';
@@ -129,90 +130,93 @@ class _GallerySearchPageState extends State<GallerySearchPage> {
   }
 
   Widget _buildSearchResult(BuildContext context) {
-    return CustomScrollView(
-      key: const PageStorageKey<String>('gallery_search_page'),
-      // cacheExtent: context.height * 2,
-      slivers: <Widget>[
-        // todo android上会有一次删除多个字符的问题
-        // if (GetPlatform.isIOS)
-        //   SliverFloatingPinnedPersistentHeader(
-        //     delegate: SliverFloatingPinnedPersistentHeaderBuilder(
-        //       minExtentProtoType: SizedBox(
-        //         height: context.mediaQueryPadding.top,
-        //       ),
-        //       maxExtentProtoType: _maxExtentProtoTypeBar(context),
-        //       builder: (_, __, maxExtent) =>
-        //           _buildSearchBar(_, __, maxExtent),
-        //     ),
-        //   ),
-        Obx(() {
-          return EhCupertinoSliverRefreshControl(
-              // onRefresh: controller.listType == ListType.gallery
-              //     ? () => controller.onEditingComplete(clear: false)
-              //     : null);
-              onRefresh: controller.listType == ListType.gallery
-                  ? () => controller.onRefresh()
-                  : null);
-        }),
-        SliverPadding(
-          padding: EdgeInsets.zero,
-          key: centerKey,
-        ),
-        Obx(() => SliverSafeArea(
-              // key: UniqueKey(),
-              bottom: false,
-              top: false,
-              sliver: () {
-                switch (controller.listType) {
-                  case ListType.gallery:
-                    return _buildListView(context);
-                  case ListType.tag:
-                    logger.d('tag list');
-                    return _getTagQryList();
-                  case ListType.init:
-                    return _getInitView();
-                }
-              }(),
-            )),
-        Obx(() {
-          if (controller.listType != ListType.tag) {
-            return EndIndicator(
-              pageState: controller.pageState,
-              loadDataMore: controller.loadDataMore,
-            );
-          } else {
-            return SliverSafeArea(
-              bottom: false,
-              top: false,
-              sliver: SliverToBoxAdapter(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: controller.onEditingComplete,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        FontAwesomeIcons.magnifyingGlass,
-                        size: 20,
-                        color: CupertinoDynamicColor.resolve(
-                            CupertinoColors.inactiveGray, context),
-                      ).paddingOnly(right: 8),
-                      Expanded(
-                        child: Text(
-                          '${L10n.of(context).search} ${controller.searchText}',
-                          maxLines: 1,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
+    return TabScrollPositionKeeper(
+      storageKey: 'gallery_search_page_$_tag',
+      child: CustomScrollView(
+        key: PageStorageKey<String>('gallery_search_page_$_tag'),
+        // cacheExtent: context.height * 2,
+        slivers: <Widget>[
+          // todo android上会有一次删除多个字符的问题
+          // if (GetPlatform.isIOS)
+          //   SliverFloatingPinnedPersistentHeader(
+          //     delegate: SliverFloatingPinnedPersistentHeaderBuilder(
+          //       minExtentProtoType: SizedBox(
+          //         height: context.mediaQueryPadding.top,
+          //       ),
+          //       maxExtentProtoType: _maxExtentProtoTypeBar(context),
+          //       builder: (_, __, maxExtent) =>
+          //           _buildSearchBar(_, __, maxExtent),
+          //     ),
+          //   ),
+          Obx(() {
+            return EhCupertinoSliverRefreshControl(
+                // onRefresh: controller.listType == ListType.gallery
+                //     ? () => controller.onEditingComplete(clear: false)
+                //     : null);
+                onRefresh: controller.listType == ListType.gallery
+                    ? () => controller.onRefresh()
+                    : null);
+          }),
+          SliverPadding(
+            padding: EdgeInsets.zero,
+            key: centerKey,
+          ),
+          Obx(() => SliverSafeArea(
+                // key: UniqueKey(),
+                bottom: false,
+                top: false,
+                sliver: () {
+                  switch (controller.listType) {
+                    case ListType.gallery:
+                      return _buildListView(context);
+                    case ListType.tag:
+                      logger.d('tag list');
+                      return _getTagQryList();
+                    case ListType.init:
+                      return _getInitView();
+                  }
+                }(),
+              )),
+          Obx(() {
+            if (controller.listType != ListType.tag) {
+              return EndIndicator(
+                pageState: controller.pageState,
+                loadDataMore: controller.loadDataMore,
+              );
+            } else {
+              return SliverSafeArea(
+                bottom: false,
+                top: false,
+                sliver: SliverToBoxAdapter(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: controller.onEditingComplete,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.magnifyingGlass,
+                          size: 20,
+                          color: CupertinoDynamicColor.resolve(
+                              CupertinoColors.inactiveGray, context),
+                        ).paddingOnly(right: 8),
+                        Expanded(
+                          child: Text(
+                            '${L10n.of(context).search} ${controller.searchText}',
+                            maxLines: 1,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
-                  ).paddingSymmetric(vertical: 10, horizontal: 16),
-                ).autoCompressKeyboard(context),
-              ),
-            );
-          }
-        }),
-      ],
+                      ],
+                    ).paddingSymmetric(vertical: 10, horizontal: 16),
+                  ).autoCompressKeyboard(context),
+                ),
+              );
+            }
+          }),
+        ],
+      ),
     );
   }
 

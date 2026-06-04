@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:blur/blur.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:eros_fe/pages/tab/view/list/tab_base.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,30 +36,33 @@ class SearchImagePage extends GetView<SearchImageController> {
         middle: Text('Search image'),
       ),
       child: Container(
-        child: CustomScrollView(
-          key: const PageStorageKey<String>('search_image_page'),
-          slivers: [
-            SliverPersistentHeader(
-              delegate: ImagePersistentHeaderDelegate(),
-              // pinned: true,
-              floating: true,
-            ),
-            EhCupertinoSliverRefreshControl(
-              onRefresh: () async {
-                await controller.reloadData();
-              },
-            ),
-            // _buildSliverList(),
-            Obx(() {
-              // logger.d('listType ${controller.listType}');
-              if (controller.listType == ListType.gallery) {
-                return _buildListView(context);
-              }
+        child: TabScrollPositionKeeper(
+          storageKey: 'search_image_page',
+          child: CustomScrollView(
+            key: const PageStorageKey<String>('search_image_page'),
+            slivers: [
+              SliverPersistentHeader(
+                delegate: ImagePersistentHeaderDelegate(),
+                // pinned: true,
+                floating: true,
+              ),
+              EhCupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  await controller.reloadData();
+                },
+              ),
+              // _buildSliverList(),
+              Obx(() {
+                // logger.d('listType ${controller.listType}');
+                if (controller.listType == ListType.gallery) {
+                  return _buildListView(context);
+                }
 
-              return _getInitView();
-            }),
-            // _getGallerySliverList(context),
-          ],
+                return _getInitView();
+              }),
+              // _getGallerySliverList(context),
+            ],
+          ),
         ),
       ),
     );

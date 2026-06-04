@@ -1,6 +1,7 @@
 import 'package:eros_fe/index.dart';
 import 'package:eros_fe/pages/tab/controller/group/custom_sublist_controller.dart';
 import 'package:eros_fe/pages/tab/controller/group/custom_tabbar_controller.dart';
+import 'package:eros_fe/pages/tab/controller/tab_scroll_position_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -56,31 +57,34 @@ class _SubListViewState<T extends CustomSubListController>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return CustomScrollView(
-      key: PageStorageKey<String>('custom_sub_page_${widget.profileUuid}'),
-      cacheExtent: kTabViewCacheExtent,
-      physics:
-          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      slivers: [
-        SliverSafeArea(
-          top: widget.pinned,
-          bottom: false,
-          sliver: _buildRefresh(context),
-        ),
-        SliverSafeArea(
-          top: false,
-          bottom: false,
-          sliver: _buildListView(),
-        ),
-        Obx(() {
-          return SliverSafeArea(
-            sliver: EndIndicator(
-              pageState: subController.pageState,
-              loadDataMore: subController.loadDataMore,
-            ),
-          );
-        }),
-      ],
+    return TabScrollPositionKeeper(
+      storageKey: 'custom_sub_page_${widget.profileUuid}',
+      child: CustomScrollView(
+        key: PageStorageKey<String>('custom_sub_page_${widget.profileUuid}'),
+        cacheExtent: kTabViewCacheExtent,
+        physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
+        slivers: [
+          SliverSafeArea(
+            top: widget.pinned,
+            bottom: false,
+            sliver: _buildRefresh(context),
+          ),
+          SliverSafeArea(
+            top: false,
+            bottom: false,
+            sliver: _buildListView(),
+          ),
+          Obx(() {
+            return SliverSafeArea(
+              sliver: EndIndicator(
+                pageState: subController.pageState,
+                loadDataMore: subController.loadDataMore,
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
 
